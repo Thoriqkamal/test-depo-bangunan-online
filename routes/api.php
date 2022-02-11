@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::resource('customers', App\Http\Controllers\API\CustomerController::class);
+Route::resource('orders', App\Http\Controllers\API\OrderController::class);
