@@ -14,10 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//API route for register new user
+Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
+//API route for login user
+Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
 
-Route::resource('customers', App\Http\Controllers\API\CustomerController::class);
-Route::resource('orders', App\Http\Controllers\API\OrderController::class);
-Route::resource('products', App\Http\Controllers\API\ProductController::class);
+//Protecting Routes
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/profile', function(Request $request) {
+        return auth()->user();
+    });
+
+    Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
+    Route::resource('customers', App\Http\Controllers\API\CustomerController::class);
+    Route::resource('orders', App\Http\Controllers\API\OrderController::class);
+    Route::resource('products', App\Http\Controllers\API\ProductController::class);
+});
