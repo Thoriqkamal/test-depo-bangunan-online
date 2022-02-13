@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: thoriq
+        uid: 1234
+      context: ./
+      dockerfile: Dockerfile
+    image: test-depo-bangunan
+    container_name: test-depo-bangunan-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - test-depo-bangunan
+
+  db:
+    image: mysql:5.7
+    container_name: test-depo-bangunan-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: test-depo-bangunan-online
+      MYSQL_ROOT_PASSWORD: admin1234
+      MYSQL_PASSWORD: admin1234
+      MYSQL_USER: laraveldocker
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - test-depo-bangunan
+
+  nginx:
+    image: nginx:alpine
+    container_name: test-depo-bangunan-nginx
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - test-depo-bangunan
+
+networks:
+  test-depo-bangunan:
+    driver: bridge
+
+#Volumes
+volumes:
+    test-depo-bangunan:
+        driver: local
